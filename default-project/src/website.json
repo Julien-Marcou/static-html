@@ -1,0 +1,9 @@
+{
+  "title": "Website title",
+  "pages": [
+    {
+      "name": "index",
+      "title": "Homepage title"
+    }
+  ]
+}
