@@ -1,6 +1,6 @@
 {
   "name": "static-html",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple, lightweight and fast static HTML website generator which makes use of Template Literals",
   "main": "index.ts",
   "bin": {
