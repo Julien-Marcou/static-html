@@ -12,7 +12,8 @@
     "render",
     "static",
     "website",
-    "builder"
+    "builder",
+    "generator"
   ],
   "repository": {
     "type": "git",
