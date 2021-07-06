@@ -3,10 +3,6 @@ import * as fs from 'fs';
 
 const usage = 'Usage : npx static <init|build|watch|serve|deploy|clean>\n';
 
-/**
- * Uses dynamic import as it allow to run the "init", "build", "deploy" & "clean" commands without installing the dev dependencies
- */
-
 async function init(rootDirectory: string): Promise<void> {
   const { Initializer } = await import('../lib/initializer');
   new Initializer(rootDirectory).init();
