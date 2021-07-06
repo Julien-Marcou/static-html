@@ -35,7 +35,7 @@ npm install static-html
   - [Page URL & Active Page](#page-url--active-page)
   - [Page Scripts](#page-scripts)
 - [Development Stack](#development-stack)
-- [Deployment to Production](#deployment-to-production)
+- [Deploy to Production](#deploy-to-production)
 - [URL Redirections](#url-redirections)
 
 ## Getting Started
@@ -524,7 +524,7 @@ export default (page: Page) => void | Promise<void>;
 Here is a quick example :
 
 ```typescript
-// src/resolver/{pageName}.ts
+// src/resolvers/{pageName}.ts
 
 function async getPhotos() {
   // ...
@@ -744,7 +744,7 @@ You can also change the port of local server using the `--port` option :
 npx static serve --port 8080
 ```
 
-## Deployment to Production
+## Deploy to Production
 
 With static websites, you want to rely on the browser's cache system, where the browser will try to keep in memory resources previously requested as long as they have not changed.
 
