@@ -1,5 +1,13 @@
 # Static-Html
 
+[![NPM Package](https://img.shields.io/npm/v/static-html?label=release&color=%23cd2620&logo=npm)](https://www.npmjs.com/package/static-html)
+[![GitHub Repository](https://img.shields.io/github/stars/Julien-Marcou/static-html?color=%23f5f5f5&logo=github)](https://github.com/Julien-Marcou/static-html)
+
+![Downloads per Month](https://img.shields.io/npm/dm/static-html)
+![Gzip Size](https://img.shields.io/bundlephobia/minzip/static-html?label=gzip%20size)
+![Dependencies Status](https://img.shields.io/david/Julien-Marcou/static-html)
+![MIT License](https://img.shields.io/npm/l/static-html)
+
 Static-Html is a simple, lightweight and fast static HTML website generator which makes use of [Template Literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) to let you render JavaScript data and expressions into HTML templates.
 
 Static-Html is not a binding engine as it do not keep track of your data or expressions to update portions of your templates dynamically, templates are only render once.
