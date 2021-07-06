@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --require ts-node/register
+#!/usr/bin/env -S npx ts-node-script
 import * as fs from 'fs';
 
 const usage = 'Usage : npx static <init|build|watch|serve|deploy|clean>\n';
