@@ -148,13 +148,18 @@ export class Builder {
 
   async build(): Promise<void> {
     process.stdout.write('Building...');
+    if (!process.stdout.isTTY) {
+      process.stdout.write('\n');
+    }
     this.cleanPreviousBuild();
     this.buildAssets();
     for (const page of Object.values(this.website.pages)) {
       await this.buildPage(page);
     }
-    process.stdout.clearLine(-1);
-    process.stdout.cursorTo(0);
+    if (process.stdout.isTTY) {
+      process.stdout.clearLine(-1);
+      process.stdout.cursorTo(0);
+    }
     process.stdout.write('Build successful\n');
   }
 }

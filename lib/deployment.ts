@@ -132,9 +132,14 @@ export class Deployment {
     }
 
     process.stdout.write('Deploying...');
+    if (!process.stdout.isTTY) {
+      process.stdout.write('\n');
+    }
     const changesMade = this.deployDirectory(this.sourceDirectory, this.targetDirectory);
-    process.stdout.clearLine(-1);
-    process.stdout.cursorTo(0);
+    if (process.stdout.isTTY) {
+      process.stdout.clearLine(-1);
+      process.stdout.cursorTo(0);
+    }
     if (changesMade.length === 0) {
       process.stdout.write('No file change\n');
     }

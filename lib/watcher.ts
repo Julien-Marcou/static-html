@@ -25,12 +25,20 @@ export class Watcher {
       },
     });
     process.stdout.write('Waiting for new file changes...');
+    if (!process.stdout.isTTY) {
+      process.stdout.write('\n');
+    }
     buildWatcher.on('all', async (_, file) => {
-      process.stdout.clearLine(-1);
-      process.stdout.cursorTo(0);
+      if (process.stdout.isTTY) {
+        process.stdout.clearLine(-1);
+        process.stdout.cursorTo(0);
+      }
       process.stdout.write(`"${file}" has changed\n`);
       await this.rebuild();
       process.stdout.write('Waiting for new file changes...');
+      if (!process.stdout.isTTY) {
+        process.stdout.write('\n');
+      }
     });
   }
 }
