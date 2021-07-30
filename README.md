@@ -784,7 +784,7 @@ The recommended `.htaccess` is :
 # src/assets/.htaccess
 RewriteEngine On
 
-# Redirect "/page.html" to "/page" (only if "/pages.html" exists)
+# Redirect "/page.html" to "/page" (only if "/page.html" exists)
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteCond %{THE_REQUEST} /(.+)\.html [NC]
 RewriteRule ^(.+)\.html$ /$1 [NC,R=301,L]
@@ -792,7 +792,7 @@ RewriteRule ^(.+)\.html$ /$1 [NC,R=301,L]
 # Redirect "/index" to "/"
 RewriteRule ^index$ / [NC,R=301,L]
 
-# Load "/page.html" when requesting "/page" (only if "/pages.html" exists)
+# Load "/page.html" when requesting "/page" (only if "/page.html" exists)
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.html -f
 RewriteRule ^ /%{REQUEST_URI}.html [QSA,L]
 ```
