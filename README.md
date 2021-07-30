@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Julien-Marcou/static-html/main/logo.png" alt="">
+</p>
+
 # Static-Html
 
 [![NPM Package](https://img.shields.io/npm/v/static-html?label=release&color=%23cd2620&logo=npm)](https://www.npmjs.com/package/static-html)
