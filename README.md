@@ -9,7 +9,6 @@
 
 ![Downloads per Month](https://img.shields.io/npm/dm/static-html)
 ![Gzip Size](https://img.shields.io/bundlephobia/minzip/static-html?label=gzip%20size)
-![Dependencies Status](https://img.shields.io/david/Julien-Marcou/static-html)
 ![MIT License](https://img.shields.io/npm/l/static-html)
 
 Static-Html is a simple, lightweight and fast static HTML website generator which makes use of [Template Literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) to let you render JavaScript data and expressions into HTML templates.
