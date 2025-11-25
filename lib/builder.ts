@@ -1,5 +1,5 @@
-import * as crypto from 'crypto';
-import * as fs from 'fs';
+import { createHash } from 'crypto';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'fs';
 import { Page } from '../types/page';
 import { Website } from '../types/website';
 import { Renderer } from './renderer';
@@ -42,7 +42,7 @@ export class Builder {
   constructor(sourceDirectory: string, targetDirectory: string) {
     this.sourceDirectory = sourceDirectory;
     this.targetDirectory = targetDirectory;
-    const websiteConfig = JSON.parse(fs.readFileSync(`${sourceDirectory}/website.json`).toString()) as WebsiteConfig;
+    const websiteConfig = JSON.parse(readFileSync(`${sourceDirectory}/website.json`).toString()) as WebsiteConfig;
     this.assetRevisions = {};
     this.externalAssets = websiteConfig.externalAssets ?? [];
     this.website = {
@@ -89,33 +89,33 @@ export class Builder {
   }
 
   private getFileContentHash(filePath: string): string {
-    return crypto.createHash('md5').update(fs.readFileSync(filePath)).digest('hex')
+    return createHash('md5').update(readFileSync(filePath)).digest('hex')
   }
 
   private copyDirectory(sourceDirectory: string, targetDirectory: string): void {
-    fs.readdirSync(sourceDirectory).forEach((file) => {
+    readdirSync(sourceDirectory).forEach((file) => {
       const sourceFile = `${sourceDirectory}/${file}`;
       const targetFile = `${targetDirectory}/${file}`;
-      if (fs.statSync(sourceFile).isDirectory()) {
-        if (!fs.existsSync(targetFile)) {
-          fs.mkdirSync(targetFile);
+      if (statSync(sourceFile).isDirectory()) {
+        if (!existsSync(targetFile)) {
+          mkdirSync(targetFile);
         }
         this.copyDirectory(sourceFile, targetFile);
       }
       else {
         if (sourceFile in this.assetRevisions) {
-          fs.copyFileSync(sourceFile, this.assetRevisions[sourceFile]);
+          copyFileSync(sourceFile, this.assetRevisions[sourceFile]);
         }
         else {
-          fs.copyFileSync(sourceFile, targetFile);
+          copyFileSync(sourceFile, targetFile);
         }
       }
     });
   }
 
   private cleanPreviousBuild(): void {
-    fs.rmSync(this.targetDirectory, {recursive: true, force: true});
-    fs.mkdirSync(this.targetDirectory);
+    rmSync(this.targetDirectory, {recursive: true, force: true});
+    mkdirSync(this.targetDirectory);
   }
 
   private buildAssets(): void {
@@ -124,14 +124,14 @@ export class Builder {
 
     // External assets
     this.externalAssets.forEach((externalAsset) => {
-      fs.copyFileSync(`${__dirname}${externalAsset.source}`, `${this.targetDirectory}${externalAsset.target}`);
+      copyFileSync(`${__dirname}${externalAsset.source}`, `${this.targetDirectory}${externalAsset.target}`);
     });
   }
 
   private async buildPage(page: Page): Promise<void> {
     // Retrieve page data
     const resolverPath = `${this.sourceDirectory}/resolvers/${page.name}.ts`;
-    if (fs.existsSync(resolverPath)) {
+    if (existsSync(resolverPath)) {
       const {
         default: resolvePage}: {default: (page: Page) => Promise<void> | void,
       } = require(resolverPath);
@@ -143,7 +143,7 @@ export class Builder {
     const htmlResult = await this.renderer.render(page);
 
     // Write result file
-    fs.writeFileSync(`${this.targetDirectory}/${page.name}.html`, htmlResult);
+    writeFileSync(`${this.targetDirectory}/${page.name}.html`, htmlResult);
   }
 
   async build(): Promise<void> {

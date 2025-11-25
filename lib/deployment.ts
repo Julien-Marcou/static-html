@@ -1,6 +1,6 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as readline from 'readline';
+import { accessSync, constants, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync } from 'fs';
+import { resolve } from 'path';
+import { createInterface } from 'readline';
 
 export class Deployment {
 
@@ -9,18 +9,18 @@ export class Deployment {
 
   constructor(sourceDirectory: string, targetDirectory: string) {
     this.sourceDirectory = sourceDirectory;
-    this.targetDirectory = path.resolve(targetDirectory);
+    this.targetDirectory = resolve(targetDirectory);
   }
 
   private deployDirectory(sourceDirectory: string, targetDirectory: string): Array<{action: string, path: string}> {
     const changesMade: Array<{action: string, path: string}> = [];
     // Add new files and overwrite existing ones if they have changed
-    fs.readdirSync(sourceDirectory).forEach((file) => {
+    readdirSync(sourceDirectory).forEach((file) => {
       const sourceFile = `${sourceDirectory}/${file}`;
       const targetFile = `${targetDirectory}/${file}`;
-      if (fs.statSync(sourceFile).isDirectory()) {
-        if (!fs.existsSync(targetFile)) {
-          fs.mkdirSync(targetFile);
+      if (statSync(sourceFile).isDirectory()) {
+        if (!existsSync(targetFile)) {
+          mkdirSync(targetFile);
           changesMade.push({
             action: 'Directory created',
             path: targetFile,
@@ -29,18 +29,18 @@ export class Deployment {
         changesMade.push(...this.deployDirectory(sourceFile, targetFile));
       }
       else {
-        if (!fs.existsSync(targetFile)) {
-          fs.copyFileSync(sourceFile, targetFile);
+        if (!existsSync(targetFile)) {
+          copyFileSync(sourceFile, targetFile);
           changesMade.push({
             action: 'File created',
             path: targetFile,
           });
         }
         else {
-          const sourceBuffer = fs.readFileSync(sourceFile);
-          const targetBuffer = fs.readFileSync(targetFile);
+          const sourceBuffer = readFileSync(sourceFile);
+          const targetBuffer = readFileSync(targetFile);
           if (!sourceBuffer.equals(targetBuffer)) {
-            fs.copyFileSync(sourceFile, targetFile);
+            copyFileSync(sourceFile, targetFile);
             changesMade.push({
               action: 'File overwritten',
               path: targetFile,
@@ -50,19 +50,19 @@ export class Deployment {
       }
     });
     // Delete expired files
-    fs.readdirSync(targetDirectory).forEach((file) => {
+    readdirSync(targetDirectory).forEach((file) => {
       const sourceFile = `${sourceDirectory}/${file}`;
       const targetFile = `${targetDirectory}/${file}`;
-      if (!fs.existsSync(sourceFile)) {
-        if (fs.statSync(targetFile).isDirectory()) {
-          fs.rmSync(targetFile, {recursive: true});
+      if (!existsSync(sourceFile)) {
+        if (statSync(targetFile).isDirectory()) {
+          rmSync(targetFile, {recursive: true});
           changesMade.push({
             action: 'Directory deleted',
             path: targetFile,
           });
         }
         else {
-          fs.rmSync(targetFile);
+          rmSync(targetFile);
           changesMade.push({
             action: 'File deleted',
             path: targetFile,
@@ -77,7 +77,7 @@ export class Deployment {
     process.stdout.write('You are about to deploy\n');
     process.stdout.write(`From "${this.sourceDirectory}"\n`);
     process.stdout.write(`To   "${this.targetDirectory}"\n`);
-    const prompt = readline.createInterface({
+    const prompt = createInterface({
       input: process.stdin,
       output: process.stdout,
     });
@@ -103,23 +103,23 @@ export class Deployment {
   }
 
   async deploy(disableInteraction: boolean = false): Promise<void> {
-    if (!fs.existsSync(this.targetDirectory)) {
+    if (!existsSync(this.targetDirectory)) {
       process.stderr.write(`The target directory "${this.targetDirectory}" for the deployement does not exist.\n`);
       return;
     }
-    if (!fs.statSync(this.targetDirectory).isDirectory()) {
+    if (!statSync(this.targetDirectory).isDirectory()) {
       process.stderr.write(`The target directory "${this.targetDirectory}" for the deployement is not a directory.\n`);
       return;
     }
     try {
-      fs.accessSync(this.targetDirectory, fs.constants.R_OK);
+      accessSync(this.targetDirectory, constants.R_OK);
     }
     catch (error) {
       process.stderr.write(`The target directory "${this.targetDirectory}" for the deployement is not readable.\n`);
       return;
     }
     try {
-      fs.accessSync(this.targetDirectory, fs.constants.W_OK);
+      accessSync(this.targetDirectory, constants.W_OK);
     }
     catch (error) {
       process.stderr.write(`The target directory "${this.targetDirectory}" for the deployement is not writable.\n`);

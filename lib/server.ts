@@ -1,6 +1,6 @@
-import * as chokidar from 'chokidar';
-import * as express from 'express';
-import * as fs from 'fs';
+import { watch } from 'chokidar';
+import express, { Application, Request, Response } from 'express';
+import { existsSync, readFileSync } from 'fs';
 
 const livereloadScript = `
   <script type="text/javascript">
@@ -52,8 +52,8 @@ export class Server {
 
   private directoryToServe: string;
   private port: number;
-  private liveReloadClients: Array<express.Response>;
-  private app: express.Application;
+  private liveReloadClients: Array<Response>;
+  private app: Application;
 
   constructor(directoryToServe: string, port: number) {
     this.directoryToServe = directoryToServe;
@@ -62,14 +62,14 @@ export class Server {
     this.app = express();
   }
 
-  private handleLiveReloadClient(req: express.Request, res: express.Response): void {
+  private handleLiveReloadClient(req: Request, res: Response): void {
     this.liveReloadClients.push(res);
     req.on('close', () => {
       this.liveReloadClients.splice(this.liveReloadClients.indexOf(res), 1);
     });
   }
 
-  private serveLiveReloadEndpoint(res: express.Response): void {
+  private serveLiveReloadEndpoint(res: Response): void {
     res.writeHead(200, {
       'Cache-Control': 'no-cache',
       'Content-Type': 'text/event-stream',
@@ -78,10 +78,10 @@ export class Server {
     res.write('data: init\n\n');
   }
 
-  private serveStaticFileEndpoint(requestedResource: string, res: express.Response): void {
+  private serveStaticFileEndpoint(requestedResource: string, res: Response): void {
     // Send HTML file with LiveReload script
     if (requestedResource.endsWith('.html')) {
-      const html = fs.readFileSync(requestedResource).toString().replace('</body>', `${livereloadScript}</body>`);
+      const html = readFileSync(requestedResource).toString().replace('</body>', `${livereloadScript}</body>`);
       res.setHeader('Content-type','text/html');
       res.send(html);
     }
@@ -91,13 +91,13 @@ export class Server {
     }
   }
 
-  private serve404Endpoint(res: express.Response): void {
+  private serve404Endpoint(res: Response): void {
     res.status(404);
     res.setHeader('Content-type','text/html');
     res.send(resourceNotFoundPage);
   }
 
-  private getRequestResource(req: express.Request): string {
+  private getRequestResource(req: Request): string {
     // Redirect / to /index.html
     let requestedResource: string;
     if (req.path === '/') {
@@ -109,7 +109,7 @@ export class Server {
 
     // Redirect /page to /page.html if /page.html exists
     const requestedHtmlResource = `${requestedResource}.html`;
-    if (!fs.existsSync(requestedResource) && fs.existsSync(requestedHtmlResource)) {
+    if (!existsSync(requestedResource) && existsSync(requestedHtmlResource)) {
       requestedResource = requestedHtmlResource;
     }
 
@@ -125,7 +125,7 @@ export class Server {
   private watchServer(): void {
     // Watch parent directory as chokidar cannot track changes anymore if the watched folder is being deleted then recreated
     // (which happens every time we rebuild the project)
-    const serverWatcher = chokidar.watch(`${this.directoryToServe}/..`, {
+    const serverWatcher = watch(`${this.directoryToServe}/..`, {
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 600,
@@ -153,7 +153,7 @@ export class Server {
 
       // Static file endpoint
       const requestedResource = this.getRequestResource(req);
-      if (fs.existsSync(requestedResource)) {
+      if (existsSync(requestedResource)) {
         this.serveStaticFileEndpoint(requestedResource, res);
         return;
       }

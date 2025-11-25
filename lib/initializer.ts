@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { resolve } from 'path';
 
 export class Initializer {
 
@@ -10,23 +10,23 @@ export class Initializer {
   }
 
   private copyDirectory(sourceDirectory: string, targetDirectory: string): void {
-    fs.readdirSync(sourceDirectory).forEach((file) => {
+    readdirSync(sourceDirectory).forEach((file) => {
       const sourceFile = `${sourceDirectory}/${file}`;
       const targetFile = `${targetDirectory}/${file}`;
-      if (fs.statSync(sourceFile).isDirectory()) {
-        if (!fs.existsSync(targetFile)) {
-          fs.mkdirSync(targetFile);
+      if (statSync(sourceFile).isDirectory()) {
+        if (!existsSync(targetFile)) {
+          mkdirSync(targetFile);
         }
         this.copyDirectory(sourceFile, targetFile);
       }
-      else if (!fs.existsSync(targetFile)) {
-        fs.copyFileSync(sourceFile, targetFile);
+      else if (!existsSync(targetFile)) {
+        copyFileSync(sourceFile, targetFile);
       }
     });
   }
 
   init(): void {
-    const defaultProjectDirectory = path.resolve(`${__dirname}/../default-project`);
+    const defaultProjectDirectory = resolve(`${__dirname}/../default-project`);
     this.copyDirectory(defaultProjectDirectory, this.rootDirectory);
     process.stdout.write('Project initialized\n');
   }

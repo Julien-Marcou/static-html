@@ -1,5 +1,5 @@
 #!/usr/bin/env -S npx ts-node-script
-import * as fs from 'fs';
+import { existsSync } from 'fs';
 
 const usage = 'Usage : npx static <init|build|watch|serve|deploy|clean>\n';
 
@@ -60,7 +60,7 @@ async function runTask(): Promise<void> {
 
   const rootDirectory = process.cwd();
   const sourceDirectory = `${rootDirectory}/src`;
-  if (task !== 'init' && !fs.existsSync(`${sourceDirectory}/website.json`)) {
+  if (task !== 'init' && !existsSync(`${sourceDirectory}/website.json`)) {
     process.stderr.write(`The "src/website.json" file was not found.\nPlease be sure to run this command inside the root directory of your project.\n`);
     return;
   }

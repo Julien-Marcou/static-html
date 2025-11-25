@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { rmSync } from 'fs';
 
 export class Cleaner {
 
@@ -9,7 +9,7 @@ export class Cleaner {
   }
 
   clean(): void {
-    fs.rmSync(this.directoryToClean, {recursive: true, force: true});
+    rmSync(this.directoryToClean, {recursive: true, force: true});
     process.stdout.write('Dist folder cleaned\n');
   }
 }

@@ -1,4 +1,4 @@
-import * as chokidar from 'chokidar';
+import { watch } from 'chokidar';
 import { Builder } from './builder';
 
 export class Watcher {
@@ -17,7 +17,7 @@ export class Watcher {
   }
 
   watch(): void {
-    const buildWatcher = chokidar.watch(this.sourceDirectory, {
+    const buildWatcher = watch(this.sourceDirectory, {
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 100,
