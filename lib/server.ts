@@ -143,7 +143,7 @@ export class Server {
     // Automatically reload client when files change on the server
     this.watchServer();
 
-    this.app.get('/*', (req, res) => {
+    this.app.get('/{*any}', (req, res) => {
       // LiveReload endpoint
       if (req.originalUrl === '/livereload') {
         this.handleLiveReloadClient(req, res);
