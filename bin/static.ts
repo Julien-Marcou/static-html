@@ -1,4 +1,4 @@
-#!/usr/bin/env -S npx ts-node-script
+#!/usr/bin/env -S npx tsx
 import { existsSync } from 'fs';
 
 const usage = 'Usage : npx static <init|build|watch|serve|deploy|clean>\n';
