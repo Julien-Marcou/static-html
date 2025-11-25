@@ -4,32 +4,32 @@ import { existsSync } from 'fs';
 const usage = 'Usage : npx static <init|build|watch|serve|deploy|clean>\n';
 
 async function init(rootDirectory: string): Promise<void> {
-  const { Initializer } = await import('../lib/initializer');
+  const { Initializer } = await import('../lib/initializer.js');
   new Initializer(rootDirectory).init();
 }
 
 async function build(sourceDirectory: string, targetDirectory: string): Promise<void> {
-  const { Builder } = await import('../lib/builder');
+  const { Builder } = await import('../lib/builder.js');
   await new Builder(sourceDirectory, targetDirectory).build();
 }
 
 async function watch(sourceDirectory: string, targetDirectory: string): Promise<void> {
-  const { Watcher } = await import('../lib/watcher');
+  const { Watcher } = await import('../lib/watcher.js');
   new Watcher(sourceDirectory, targetDirectory).watch();
 }
 
 async function serve(directoryToServe: string, port: number): Promise<void> {
-  const { Server } = await import('../lib/server');
+  const { Server } = await import('../lib/server.js');
   await new Server(directoryToServe, port).serve();
 }
 
 async function deploy(sourceDirectory: string, targetDirectory: string, disableInteraction: boolean): Promise<void> {
-  const { Deployment } = await import('../lib/deployment');
+  const { Deployment } = await import('../lib/deployment.js');
   await new Deployment(sourceDirectory, targetDirectory).deploy(disableInteraction);
 }
 
 async function clean(directoryToClean: string): Promise<void> {
-  const { Cleaner } = await import('../lib/cleaner');
+  const { Cleaner } = await import('../lib/cleaner.js');
   new Cleaner(directoryToClean).clean();
 }
 
